@@ -1,4 +1,5 @@
 from typing import List
+import json
 
 
 class Solution:
@@ -21,7 +22,26 @@ class Solution:
             
     # Question 2: Which protocols have wrong messages frequency in the session compared to their expected frequency based on FPS?
     def q2(self) -> List[str]:
-        pass
+        frqDict = {}
+        fpsDict = {164: 36, 84: 18, 48: 9, 1: 1}
+        ans = []
+        
+        with open(self.data_file_path, 'r') as file:
+            for line in file:
+                line_parts = line.split(',')
+                line_parts[2] = frqDict.get(line_parts[2], 0) + 1
+
+        with open(self.protocol_json_path, 'r') as json_file:
+            data = json.load(json_file)
+
+        protocols = data.get('protocols', {})
+
+        
+        for id, vals in protocols.items():
+            if fpsDict[frqDict[id]] != vals.get('Expected FPR', 0):
+                ans.append(id)
+
+        return ans
 
     # Question 3: Which protocols are listed as relevant for the version but are missing in the data file?
     def q3(self) -> List[str]:
@@ -47,4 +67,7 @@ class Solution:
         ascii_string = byte_array.decode('ascii', 'ignore')  # 'ignore' ignores any non-ASCII byte values
         
         return ascii_string
+
         
+
+    
