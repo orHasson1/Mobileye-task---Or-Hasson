@@ -1,3 +1,4 @@
+from asyncio import protocols
 from typing import List
 import json
 
@@ -45,7 +46,28 @@ class Solution:
 
     # Question 3: Which protocols are listed as relevant for the version but are missing in the data file?
     def q3(self) -> List[str]:
-        pass
+        files = set()
+        ans = set()
+        with open(self.data_file_path, 'r') as file:
+            for line in file:
+                line_parts = line.split(',')
+                line_parts[2] = files.add(line_parts[2])
+
+        with open(self.protocol_json_path, 'r') as json_file:
+            data = json.load(json_file)
+
+        protocols = data.get('protocols', {})
+        byVer = data.get('protocols_by_version', {}) 
+
+        for id in protocols.values():
+            if id not in files:
+                ans.add(id)
+
+        for id in byVer.values():
+            if id not in files:
+                ans.add(id)
+
+        return list(ans)
 
     # Question 4: Which protocols appear in the data file but are not listed as relevant for the version?
     def q4(self) -> List[str]:
