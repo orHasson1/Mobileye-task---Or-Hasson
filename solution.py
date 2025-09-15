@@ -71,8 +71,31 @@ class Solution:
 
     # Question 4: Which protocols appear in the data file but are not listed as relevant for the version?
     def q4(self) -> List[str]:
-        pass
+        files = set()
+        ans = set()
 
+        with open(self.protocol_json_path, 'r') as json_file:
+            data = json.load(json_file)
+
+
+        protocols = data.get('protocols', {})
+        byVer = data.get('protocols_by_version', {}) 
+
+        for id in protocols.values():
+                files.add(id)
+
+        for id in byVer.values():
+                files.add(id)
+
+        with open(self.data_file_path, 'r') as file:
+            for line in file:
+                line_parts = line.split(',')
+
+                if line_parts[2] not in files:
+                    ans.add(line_parts[2])
+
+        return list(ans)
+    
     # Question 5: Which protocols have at least one message in the session with mismatch between the expected size integer and the actual message content size?
     def q5(self) -> List[str]:
         pass
